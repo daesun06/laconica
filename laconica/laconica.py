@@ -1,41 +1,29 @@
-"""Welcome to Pynecone! This file outlines the steps to create a basic app."""
-from pcconfig import config
-
 import pynecone as pc
 
-docs_url = "https://pynecone.io/docs/getting-started/introduction"
-filename = f"{config.app_name}/{config.app_name}.py"
+city_name = "Almatyt"
 
 
-class State(pc.State):
-    """The app state."""
+class AppState(pc.State):
+    text: str = "Type something..."
+    input_text: str
+    def search_weather(self):
+        self.text = self.input_text
 
-    pass
-
-
-def index() -> pc.Component:
-    return pc.center(
-        pc.vstack(
-            pc.heading("Welcome to Pynecone!", font_size="2em"),
-            pc.box("Get started by editing ", pc.code(filename, font_size="1em")),
-            pc.link(
-                "Check out our docs!",
-                href=docs_url,
-                border="0.1em solid",
-                padding="0.5em",
-                border_radius="0.5em",
-                _hover={
-                    "color": "rgb(107,99,246)",
-                },
+def index():
+    return pc.vstack(
+        pc.hstack(
+            pc.input(on_change=AppState.set_input_text),
+            pc.button(
+                "Go",
+                color_scheme="blue",
+                border_radius="1em",
+                on_click=AppState.search_weather(),
             ),
-            spacing="1.5em",
-            font_size="2em",
         ),
-        padding_top="10%",
+        pc.text(AppState.text),
     )
 
 
-# Add state and page to the app.
-app = pc.App(state=State)
+app = pc.App(state=AppState)
 app.add_page(index)
 app.compile()
