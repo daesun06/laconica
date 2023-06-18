@@ -1,13 +1,25 @@
 import pynecone as pc
+import requests
 
-city_name = "Almatyt"
+API_KEY = ""
 
 
 class AppState(pc.State):
     text: str = "Type something..."
     input_text: str
+
     def search_weather(self):
-        self.text = self.input_text
+        response = requests.get(
+            f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={self.input_text}&days=1&aqi=no&alerts=no"
+        )
+
+        self.text = f"{response.json()['current']}"
+
+        # Task 2
+        # Format into a nicely styled box component that displays
+        # Country name, city name, weather in celcius AND it should be placed
+        # inside a box component similar to https://i.imgur.com/dtKFDY1.png
+
 
 def index():
     return pc.vstack(
