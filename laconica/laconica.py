@@ -5,7 +5,9 @@ API_KEY = ""
 
 
 class AppState(pc.State):
-    text: str = "Type something..."
+    text: str = "To get forecast info, type your city's name"
+    city: str
+    country: str
     input_text: str
 
     def search_weather(self):
@@ -13,7 +15,10 @@ class AppState(pc.State):
             f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={self.input_text}&days=1&aqi=no&alerts=no"
         )
 
-        self.text = f"{response.json()['current']}"
+        self.text = f"{response.json()['current']['temp_c']}"
+        self.city = f"{response.json()['location']['name']}"
+        self.country = f"{response.json()['location']['country']}"
+        self.icon = f"{response.json()['current']['condition']['icon']}"
 
         # Task 2
         # Format into a nicely styled box component that displays
@@ -32,8 +37,14 @@ def index():
                 on_click=AppState.search_weather(),
             ),
         ),
+        pc.hstack(
+            pc.vstack(
+                pc.text(AppState.city),
+                pc.text(AppState.country)
+            ),
         pc.text(AppState.text),
-    )
+        )
+    )    
 
 
 app = pc.App(state=AppState)
