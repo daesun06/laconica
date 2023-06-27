@@ -1,7 +1,7 @@
 import pynecone as pc
 import requests
 
-API_KEY = ""
+API_KEY = "" # <----- insert your own Weather API key
 
 
 class AppState(pc.State):
@@ -9,6 +9,9 @@ class AppState(pc.State):
     city: str
     country: str
     input_text: str
+
+    show: bool = True
+
 
     def search_weather(self):
         response = requests.get(
@@ -19,6 +22,7 @@ class AppState(pc.State):
         self.city = f"{response.json()['location']['name']}"
         self.country = f"{response.json()['location']['country']}"
         self.icon = f"{response.json()['current']['condition']['icon']}"
+        self.show = not (self.show)
 
         # Task 2
         # Format into a nicely styled box component that displays
@@ -31,19 +35,20 @@ def index():
         pc.hstack(
             pc.input(on_change=AppState.set_input_text),
             pc.button(
-                "Go",
+                "Search",
                 color_scheme="blue",
                 border_radius="1em",
                 on_click=AppState.search_weather(),
             ),
         ),
-        pc.hstack(
-            pc.vstack(
-                pc.text(AppState.city),
-                pc.text(AppState.country)
-            ),
-        pc.text(AppState.text),
-        )
+        pc.cond(AppState.show, pc.text("To get forecast info, type your city's name"),
+            pc.hstack(
+                pc.vstack(
+                    pc.text(AppState.city),
+                    pc.text(AppState.country)
+                ),
+            pc.text(AppState.text),
+        ))
     )    
 
 
