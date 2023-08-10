@@ -1,10 +1,10 @@
-import pynecone as pc
+import reflex as rx
 import requests
 
 API_KEY = ""  # <----- insert your own Weather API key
 
 
-class AppState(pc.State):
+class AppState(rx.State):
     text: str = "To get forecast info, type your city's name"
     city: str
     country: str
@@ -27,6 +27,8 @@ class AppState(pc.State):
             ## Add code that will trigger opening a dialog component
             self.text = "Error city not found try something else"
 
+
+
             # Task 2 - Done
             # Format into a nicely styled box component that displays
             # Country name, city name, weather in celcius AND it should be placed
@@ -41,35 +43,37 @@ class AppState(pc.State):
 
 
 def index():
-    return pc.vstack(
-        pc.hstack(
-            pc.input(on_change=AppState.set_input_text),
-            pc.button(
+    return rx.vstack(
+        rx.hstack(
+            rx.input(on_change=AppState.set_input_text),
+            rx.button(
                 "Search",
                 color_scheme="blue",
-                border_radius="1em",
-                on_click=AppState.search_weather(),
             ),
         ),
-        pc.cond(
+        rx.cond(
             AppState.show,
-            pc.text("To get forecast info, type your city's name"),
-            pc.hstack(
-                pc.vstack(
-                    pc.text(AppState.city),
-                    pc.text(AppState.country),
-                    pc.image(
-                        src=AppState.icon,
-                        width="100px",
-                        height="auto",
+            rx.text("To get forecast info, type your city's name"),
+            rx.hstack(
+                rx.box(
+                    rx.vstack(
+                        rx.text(AppState.city),
+                        rx.text(AppState.country),
+                        rx.image(
+                            src=AppState.icon,
+                            width="100px",
+                            height="auto",
+                        ),
+                        bg="blue",
+                        border_radius="lg",
+                        width="80%"
                     ),
+                    rx.text(AppState.text),
                 ),
-                pc.text(AppState.text),
             ),
-        ),
+        )
     )
 
-
-app = pc.App(state=AppState)
+app = rx.App(state=AppState)
 app.add_page(index)
 app.compile()
