@@ -5,11 +5,12 @@ API_KEY = "c8479639257c4e53ab805054232305"  # <----- insert your own Weather API
 
 
 class AppState(rx.State):
-    text: str = "To get forecast info, type your city's name"
+    text: str = ""
     city: str
     country: str
     input_text: str
     icon: str
+    temp: str
     show: bool = True
 
     def search_weather(self):
@@ -43,12 +44,12 @@ class AppState(rx.State):
             # 4. Style and user new components (see screenshot in telegram for reference)
             # 5. Center align the components in the middle of the screen
     def clear_input_text(self):
-        self.text = None
+        self.text = ""
 
 def index():
     return rx.vstack(
         rx.hstack(
-            rx.input(on_change=AppState.set_input_text),
+            rx.input(on_change=AppState.set_text, value=AppState.text),
             rx.button(
                 "Search",
                 color_scheme="blue",
@@ -77,7 +78,7 @@ def index():
                         border_radius="lg",
                         width="80%"
                     ),
-                    rx.temp(AppState.temp),
+                    rx.text(AppState.temp),
                 ),
             ),
         )

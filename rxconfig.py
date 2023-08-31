@@ -1,7 +1,9 @@
 import reflex as rx
 
+
 class LaconicaConfig(rx.Config):
     pass
+
 
 config = LaconicaConfig(
     app_name="laconica",
