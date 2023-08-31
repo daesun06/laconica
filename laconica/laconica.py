@@ -1,7 +1,7 @@
 import reflex as rx
 import requests
 
-API_KEY = ""  # <----- insert your own Weather API key
+API_KEY = "c8479639257c4e53ab805054232305"  # <----- insert your own Weather API key
 
 
 class AppState(rx.State):
@@ -18,16 +18,18 @@ class AppState(rx.State):
                 f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={self.input_text}&days=1&aqi=no&alerts=no"
             )
 
-            self.text = f"{response.json()['current']['temp_c']}"
+            self.temp = f"{response.json()['current']['temp_c']}"
             self.city = f"{response.json()['location']['name']}"
             self.country = f"{response.json()['location']['country']}"
             self.icon = f"{response.json()['current']['condition']['icon']}"
-            self.show = not (self.show)
+            self.show = not (self.show) 
         except Exception:
             ## Add code that will trigger opening a dialog component
-            self.text = "Error city not found try something else"
+            self.city = None
+            self.country = None
+            self.icon = None
 
-
+            self.temp = "Error city not found try something else"
 
             # Task 2 - Done
             # Format into a nicely styled box component that displays
@@ -40,7 +42,8 @@ class AppState(rx.State):
             # 3. When city is not found, clear state set all variables to empty string
             # 4. Style and user new components (see screenshot in telegram for reference)
             # 5. Center align the components in the middle of the screen
-
+    def clear_input_text(self):
+        self.text = None
 
 def index():
     return rx.vstack(
@@ -49,7 +52,13 @@ def index():
             rx.button(
                 "Search",
                 color_scheme="blue",
+                on_click=AppState.search_weather,
             ),
+            rx.button(
+                "Clear",
+                color_scheme="blue",
+                on_click=AppState.clear_input_text,
+            )
         ),
         rx.cond(
             AppState.show,
@@ -64,11 +73,11 @@ def index():
                             width="100px",
                             height="auto",
                         ),
-                        bg="blue",
+                        bg="white",
                         border_radius="lg",
                         width="80%"
                     ),
-                    rx.text(AppState.text),
+                    rx.temp(AppState.temp),
                 ),
             ),
         )
