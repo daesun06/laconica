@@ -8,27 +8,23 @@ class AppState(rx.State):
     text: str = ""
     city: str
     country: str
-    input_text: str
-    icon: str
     temp: str
     show: bool = True
 
     def search_weather(self):
         try:
             response = requests.get(
-                f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={self.input_text}&days=1&aqi=no&alerts=no"
+                f"http://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={self.text}&days=1&aqi=no&alerts=no"
             )
 
             self.temp = f"{response.json()['current']['temp_c']}"
             self.city = f"{response.json()['location']['name']}"
             self.country = f"{response.json()['location']['country']}"
-            self.icon = f"{response.json()['current']['condition']['icon']}"
             self.show = not (self.show)
         except Exception:
             ## Add code that will trigger opening a dialog component
             self.city = None
             self.country = None
-            self.icon = None
             self.temp = "Error city not found try something else"
             # Task 3
             # 1. Handle errors gracefully, if city was not found, display a custom dialog component that says `City not found try something else`. Read about try except in python
@@ -46,9 +42,13 @@ def index():
         rx.hstack(
             rx.text("ㅤㅤ"),
             rx.badge(
-                "Weather Forecast by Daesun", variant="subtle", color_scheme="blue"
+                "Weather Forecast by Daesun",
+                variant="subtle",
+                color_scheme="blue",
+                bg="black",
+                color="white",
             ),
-            rx.text("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ"),
+            rx.text("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ"),  # TODO: Use alignment
             rx.link(
                 "GitHub",
                 href="https://github.com/daesun06/laconica",
@@ -60,6 +60,26 @@ def index():
             height="5vh",
         ),
         rx.box("", height="40vh", bg=""),
+        rx.cond(
+            AppState.show,
+            rx.text("To get forecast info, type your city's name"),
+            rx.hstack(
+                rx.box(
+                    rx.vstack(
+                        rx.heading(AppState.city, size="xl", color="orange"),
+                        rx.heading(AppState.country, size="2xl", color="white"),
+                        rx.heading(AppState.temp, size="3xl", color="orange"),
+                        rx.icon(
+                            tag="sun",
+                            size="xl",
+                        ),
+                        bg="black",
+                        border_radius="lg",
+                        width="100%",
+                    ),
+                ),
+            ),
+        ),
         rx.hstack(
             rx.input(on_change=AppState.set_text, value=AppState.text),
             rx.button(
@@ -71,27 +91,6 @@ def index():
                 "Clear",
                 color_scheme="blue",
                 on_click=AppState.clear_input_text,
-            ),
-        ),
-        rx.cond(
-            AppState.show,
-            rx.text("To get forecast info, type your city's name"),
-            rx.hstack(
-                rx.box(
-                    rx.vstack(
-                        rx.text(AppState.city),
-                        rx.text(AppState.country),
-                        rx.image(
-                            src=AppState.icon,
-                            width="100px",
-                            height="auto",
-                        ),
-                        bg="white",
-                        border_radius="lg",
-                        width="80%",
-                    ),
-                    rx.text(AppState.temp),
-                ),
             ),
         ),
         rx.box("", height="44.5vh", bg="#1D2330"),
