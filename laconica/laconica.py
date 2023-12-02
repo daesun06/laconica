@@ -1,7 +1,10 @@
 import reflex as rx
 import requests
+import random
 
 API_KEY = "c8479639257c4e53ab805054232305"  # <----- insert your own Weather API key
+bgs = ["#1D2330", "#2E1F27", "#12100E", "#272727", "#1C3144", "#533B4D", "#392F5A"]
+bg = random.choice(bgs)
 
 
 class AppState(rx.State):
@@ -44,11 +47,11 @@ def index():
             rx.badge(
                 "Weather Forecast by Daesun",
                 variant="subtle",
-                color_scheme="blue",
-                bg="black",
+                color_scheme="black",
+                bg="royalblue",
                 color="white",
             ),
-            rx.text("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ"),  # TODO: Use alignment
+            rx.text("ㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤㅤ"),
             rx.link(
                 "GitHub",
                 href="https://github.com/daesun06/laconica",
@@ -66,12 +69,13 @@ def index():
             rx.hstack(
                 rx.box(
                     rx.vstack(
-                        rx.heading(AppState.city, size="xl", color="orange"),
+                        rx.heading(AppState.city, size="xl", color="goldenrod"),
                         rx.heading(AppState.country, size="2xl", color="white"),
-                        rx.heading(AppState.temp, size="3xl", color="orange"),
+                        rx.heading(AppState.temp, size="3xl", color="goldenrod"),
                         rx.icon(
                             tag="sun",
                             size="xl",
+                            color="gold",
                         ),
                         bg="black",
                         border_radius="lg",
@@ -93,7 +97,7 @@ def index():
                 on_click=AppState.clear_input_text,
             ),
         ),
-        rx.box("", height="44.5vh", bg="#1D2330"),
+        rx.box("", height="44.5vh", bg="bg"),
         center_content=True,
         bg="#1D2330",
         color="white",
